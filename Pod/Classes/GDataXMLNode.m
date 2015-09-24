@@ -1831,7 +1831,23 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
             CFRelease(xmlDoc_->_private);
         }
         
+        xmlDeregisterNodeFunc orig = 0;
+        if (xmlIsMainThread())
+        {
+            orig = xmlDeregisterNodeDefault(0);
+        }
+        else
+        {
+            orig = xmlGetGlobalState()->xmlDeregisterNodeDefaultValue;
+            xmlGetGlobalState()->xmlDeregisterNodeDefaultValue = 0;
+        }
+
         xmlFreeDoc(xmlDoc_);
+
+        if (xmlIsMainThread())
+            xmlDeregisterNodeDefault(orig);
+        else
+            xmlGetGlobalState()->xmlDeregisterNodeDefaultValue = orig;
     }
 }
 
