@@ -1821,6 +1821,20 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
     return [NSString stringWithFormat:@"%@ %p", [self class], self];
 }
 
+// When using Xcode 10 and the iOS/tvOS 12 SDKs, xmlDeregisterNodeDefaultValue
+// is a preprocessor definition that causes build errors in the code below.
+// To rectify this, we manually undefine it here.
+//
+// If/when we switch to targeting those versions as a minimum, this can be
+// removed.
+//
+// Many thanks to @rcombs for identifying the fix.
+//
+// See https://plex.slack.com/archives/C2R5UNKQB/p1536688686000100 for
+// reference.
+//
+#undef xmlDeregisterNodeDefaultValue
+
 - (void)dealloc {
     if (xmlDoc_ != NULL) {
         // release the strings cache
